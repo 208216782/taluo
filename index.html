@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>✨ 星语塔罗 · 命运之门</title>
     <style>
-        /* 样式和之前一样，我就保留原样 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 100%);
@@ -264,9 +263,9 @@
         </div>
         <div id="page-home" class="page active">
             <div class="api-config">
-                <label class="api-label">🔑 DeepSeek API Key（选填，AI解读更丰富）</label>
+                <label class="api-label">🔑 DeepSeek API Key（选填，AI解读更丰富更智能）</label>
                 <input type="password" class="api-input" id="apiKeyInput" placeholder="sk-...">
-                <p class="api-hint">获取地址：<a href="https://platform.deepseek.com/" target="_blank">platform.deepseek.com</a></p>
+                <p class="api-hint">获取地址：<a href="https://platform.deepseek.com/" target="_blank">platform.deepseek.com</a>（没有Key也可以用本地解读！）</p>
             </div>
             <div class="mode-grid">
                 <div class="mode-card" onclick="App.startMode('daily')">
@@ -316,23 +315,62 @@
                 { id:21, name:'世界', icon:'🌍', upright:'完成、整合、成就、旅行、圆满', reversed:'未完成、缺乏圆满、延迟' }
             ],
             getAllCards() { return [...this.majorArcana]; },
-            getLocalReading(cards, type, question) {
+            getPersonalizedReading(cards, type, question) {
                 const cardNames = cards.map(c => c.name).join('、');
-                const defaultDaily = {
-                    summary: `今日抽到「${cards[0]?.name || '牌'}」（${cards[0]?.position || '正位'}），这是来自宇宙的信号。`,
-                    detailed: `${cards[0]?.name}代表着${cards[0]?.meaning || '某种能量'}。这意味着今天你可能会感受到这股能量的影响。`,
-                    advice: '建议你保持开放的心态，观察今天发生的事情，它们可能会给你带来重要的启示。',
-                    warning: '注意不要过于执着于某个特定结果，保持灵活和开放。',
-                    lucky: '今日幸运提示：保持正念，活在当下，感恩每一个小确幸。'
-                };
-                const defaultTriangle = {
-                    echo: `关于「${question || '你的问题'}」，宇宙给了你三张牌的指引。`,
-                    connection: `过去的「${cards[0]?.name}」带来了它的影响，现在的「${cards[1]?.name}」展示着现状，未来的「${cards[2]?.name}」则预示着可能性。`,
-                    advice: '从过去的经历中学习，把握现在的能量，开放地迎接未来。',
-                    warning: '不要被过去束缚，也不要过度焦虑未来，此刻才是你拥有的。',
-                    conclusion: '相信过程，相信时间会给你最好的答案。记住，命运掌握在你自己手中！'
-                };
-                return type === 'daily' ? defaultDaily : defaultTriangle;
+                let summary, detailed, advice, warning, lucky;
+                let echo, connection, conclusion;
+                if (type === 'daily') {
+                    const card = cards[0];
+                    summary = `今日你抽到了「${card.name}」（${card.position}）！这是宇宙给你的特别信号。`;
+                    if (card.name === '愚者') {
+                        detailed = '今天是适合冒险的一天！也许会有新的机会出现，保持开放的心态去迎接吧。不要害怕未知，勇敢地迈出脚步。';
+                        advice = '今天不妨试着做一些不一样的事情，走一条没走过的路，或是尝试一个新的爱好。';
+                        warning = '但是要注意，不要因为过于冒险而忽略了实际问题，凡事三思而后行。';
+                        lucky = '今日幸运提示：保持童心，相信直觉！';
+                    } else if (card.name === '魔术师') {
+                        detailed = '今天你的创造力爆棚！这是开始新项目、学习新技能的好日子。你有能力把想法变成现实。';
+                        advice = '利用今天的能量，着手推进你想做的事情。你的能力和自信是你的优势。';
+                        warning = '注意不要过于自信，或是用手段去操控别人。保持真诚。';
+                        lucky = '今日幸运提示：相信你的能力！';
+                    } else if (card.name === '月亮') {
+                        detailed = '今天可能会有些情绪波动，或是有些事情让你感到不安。这其实是你的潜意识在和你对话。';
+                        advice = '不妨给自己一些独处的时间，写日记、冥想，听听内心的声音。';
+                        warning = '不要被表面的恐惧所吓倒，很多时候只是我们自己在吓自己。';
+                        lucky = '今日幸运提示：相信你的直觉！';
+                    } else if (card.name === '太阳') {
+                        detailed = '今天是充满阳光的一天！快乐、成功、活力四射，适合和朋友相聚，或是去户外走走。';
+                        advice = '把握今天的好能量，去做让你开心的事情，把这份快乐传递给身边的人。';
+                        warning = '即使一切顺利，也不要过于骄傲，保持感恩和谦逊。';
+                        lucky = '今日幸运提示：微笑面对一切！';
+                    } else if (card.name === '死神') {
+                        detailed = '今天可能会带来结束的能量。记住，结束只是新的开始，不要害怕改变，拥抱它。';
+                        advice = '这是放下过去的好时机。有些事情该结束了，才能让新的进来。';
+                        warning = '不要抗拒改变，抗拒只会让你更痛苦。放手，然后前进。';
+                        lucky = '今日幸运提示：拥抱变化！';
+                    } else if (card.name === '恋人') {
+                        detailed = '今天关于关系和选择的能量很强。可能会有感情上的消息，或是需要做一些决定。';
+                        advice = '听从内心，做出符合你价值观的选择。真诚面对自己和他人。';
+                        warning = '不要为了迎合别人而做决定，也不要在冲动下做选择。';
+                        lucky = '今日幸运提示：让爱指引你！';
+                    } else {
+                        detailed = `「${card.name}」（${card.position}）的能量围绕着你。${card.meaning}。这是今天给你的启示。`;
+                        advice = '保持开放的心态，观察今天发生的事情，它们可能会给你带来重要的线索。';
+                        warning = '不要过于执着于某个结果，一切都是最好的安排。';
+                        lucky = '今日幸运提示：保持正念，活在当下！';
+                    }
+                    return { summary, detailed, advice, warning, lucky };
+                } else {
+                    echo = `关于你的问题「${question || '你的探索'}」，三张牌揭示了你的命运轨迹。`;
+                    const card0 = cards[0]; const card1 = cards[1]; const card2 = cards[2];
+                    connection = `过去的「${card0.name}」（${card0.position}）给你带来了${card0.meaning}的影响。现在的「${card1.name}」（${card1.position}）展示着${card1.meaning}。未来的「${card2.name}」（${card2.position}）预示着${card2.meaning}。`;
+                    advice = '从过去的经历中学习，把握现在的能量，以开放的心态迎接未来。你有能力创造你想要的未来。';
+                    warning = '不要被过去的经历束缚，也不要过度焦虑未来。现在，才是你真正拥有的。';
+                    conclusion = '相信过程，相信时间会给你最好的答案。记住，命运掌握在你自己手中！';
+                    return { echo, connection, advice, warning, conclusion };
+                }
+            },
+            getLocalReading(cards, type, question) {
+                return this.getPersonalizedReading(cards, type, question);
             }
         };
         // ==================== 抽牌逻辑 ====================
@@ -406,9 +444,21 @@
                     const aiText = data?.choices?.[0]?.message?.content;
                     if (!aiText) return null;
                     if (type === 'daily') {
-                        return { summary:aiText, detailed:aiText, advice:'保持正念，相信你的直觉。', warning:'不要过于执着于某个特定结果。', lucky:'今日幸运提示：活在当下。' };
+                        return {
+                            summary: `今日抽到「${cards[0]?.name || '牌'}」！`,
+                            detailed: aiText,
+                            advice: '保持正念，相信你的直觉。',
+                            warning: '不要过于执着于某个特定结果，保持灵活和开放。',
+                            lucky: '今日幸运提示：活在当下，感恩一切！'
+                        };
                     } else {
-                        return { echo:'感谢你的问题。', connection:aiText, advice:'相信过程，勇敢前行。', warning:'保持开放，不要焦虑。', conclusion:'命运掌握在你自己手中。' };
+                        return {
+                            echo: `关于「${question || '你的问题'}」，宇宙给了你指引。`,
+                            connection: aiText,
+                            advice: '相信过程，勇敢前行。',
+                            warning: '保持开放，不要焦虑。',
+                            conclusion: '命运掌握在你自己手中！'
+                        };
                     }
                 } catch (e) { console.error('AI Error:', e); return null; }
             },
@@ -479,9 +529,9 @@
                 `;
             },
             renderReading(reading, type) {
-                const safeGet = (obj, key) => {
-                    if (!obj) return '正在获取解读...';
-                    return obj[key] || '让我们一起感受这张牌的能量吧...';
+                const safeGet = (obj, key, def = '让我们一起感受这张牌的能量吧...') => {
+                    if (!obj) return def;
+                    return obj[key] || def;
                 };
                 if (type === 'daily') {
                     return `
